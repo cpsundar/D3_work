@@ -41,20 +41,20 @@ var chartGroup = svg.append("g")
   
 
     var xLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(usData, d => d.poverty)])
+    .domain([8, d3.max(usData, d => d.poverty)])
     .range([0, width])
     console.log(d3.max(usData, d => d.poverty))
 
   // Create a linear scale for the vertical axis.
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(usData, d => d.healthcare)])
+    .domain([4, d3.max(usData, d => d.healthcare)])
     .range([height, 0]);
     //.range([ 0, height]);
 
   // Create two new functions passing our scales in as arguments
   // These will be used to create the chart's axes
-  var bottomAxis = d3.axisBottom(xLinearScale).ticks(25);
-  var leftAxis = d3.axisLeft(yLinearScale).ticks(25);
+  var bottomAxis = d3.axisBottom(xLinearScale).ticks(10);
+  var leftAxis = d3.axisLeft(yLinearScale).ticks(10);
 
   // Append two SVG group elements to the chartGroup area,
   // and create the bottom and left axes inside of them
@@ -67,48 +67,62 @@ var chartGroup = svg.append("g")
     .call(bottomAxis);
 
 
-
-
-
-
     chartGroup.selectAll("circle")
     .data(usData)
     .enter()
     .append('circle')    
-    //.attr("cx", d => d.poverty)
-    //.attr("cy", d => d.healthcare)
     .attr("cx", function(d){
       console.log(`state:${ d.abbr} -- poverty ${d.poverty} --  healthcare ${d.healthcare}`)
       return xLinearScale(d.poverty) ;
     })
     .attr("cy", function(d){
       return yLinearScale(d.healthcare);
-    })    
-    //console.log(`state:${d => d.abbr} -- poverty ${d => d.poverty} --  healthcare ${d => d.healthcare}`)    
+    })           
     .attr("r",  8)
-     //.attr("stroke", "black")
-    // .attr("stroke-width", "5")
-     .attr("fill", "skyblue")
+     //.attr("fill", "skyblue")
      //.attr("opacity", ".5")
+     .attr("class", "stateCircle")
+     
 
-     //for text
-    chartGroup.selectAll("text")
+    //for text
+    chartGroup.selectAll()
     .data(usData)
     .enter()
     .append("text")    
     .attr("x", d => xLinearScale(d.poverty))
     .attr("y", d => yLinearScale(d.healthcare)+4)
-    // .attr("fill", "red")
-    .attr("fill", "white")
-    .attr("font-family","sans-serif")
-    .attr("font-size", "8px")
-    .attr("text-anchor", "middle")
-    
+     // .attr("fill", "red")
+    //.attr("fill", "white")
+    //.attr("font-family","sans-serif")
+    .attr("font-size", "8px")    
+    //.attr("text-anchor", "middle")
+    //.attr("stroke", "red")
+    .attr("class", "stateText")
     //.attr("text-anchor", "start")
     .text(d => d.abbr)
-    // console.log(` key - ${i} --- data : ${d}`)
+    //.text("TT")
 
-
+        // Create axes labels
+        chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "12px")
+        //.attr("class", "axisText")
+        //.attr("font-family","sans-serif")
+        //.attr("font-size", "12px")
+        .text("Lacks Healthcare (%)");
+  
+      chartGroup.append("text")
+        .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+        //.attr("class", "axisText")
+        .attr("fill", "black")
+        .attr("font-size", "12px")
+        .attr("font-weight", "bold")
+        .text("In poverty (%)");
     
   });
 
